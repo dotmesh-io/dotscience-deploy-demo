@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Dotscience Model Demo</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css?2019032001" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css?2019032003" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+  <nav class="black" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29.1 22.7" id="logo" width="35" height="35"><path d="M12.9 22.7c-.1 0-.3 0-.4-.1-.4-.2-.8-.5-.5-2v-.1H7.7c-.3 0-.6-.3-.6-.6s.3-.6.6-.6h5.5c.5 0 .8-.4.8-.8 0-.5-.4-.8-.8-.8H9.7c-.3 0-.5-.3-.5-.6s.2-.5.5-.6h5.8c.5 0 .8-.4.8-.8 0-.5-.4-.8-.8-.8H3.3c-.3 0-.6-.3-.6-.6s.3-.6.6-.6h17.2c.5 0 .8-.4.8-.8 0-.5-.4-.8-.8-.8h-11c-.3 0-.5-.3-.5-.6s.3-.5.6-.5h7c.5 0 .8-.4.8-.8s-.4-.8-.8-.8H.6C.3 9.3 0 9 0 8.7c0-.3.3-.6.6-.6h12.1c.5 0 .8-.4.8-.8 0-.5-.4-.8-.8-.8H8.2c-.3 0-.6-.3-.6-.6s.3-.6.6-.6h6.7c.5 0 .8-.4.8-.8 0-.5-.4-.8-.8-.8H5.6c-.3 0-.6-.2-.6-.5s.3-.6.6-.6h6.3s.1 0 .1-.1v-.1c-.4-1.8 0-2.1.5-2.3.1-.1.2-.1.4-.1.3 0 .7.1 1.2.4L28 9.8c.6.4 1 1 1.1 1.6-.1.6-.5 1.1-1.1 1.6l-13.9 9.4c-.5.1-.9.3-1.2.3zm9.2-13.4c-.5 0-.8.4-.8.8 0 .5.4.8.8.8.5 0 .8-.4.8-.8s-.4-.8-.8-.8zm-2.7 0c-.5 0-.8.4-.8.8 0 .5.4.8.8.8.5 0 .8-.4.8-.8.1-.4-.3-.8-.8-.8zM5.5 16.4c-.4 0-.7.3-.7.7 0 .4.3.7.7.7.4 0 .7-.3.7-.7 0-.4-.3-.7-.7-.7zm.1-5.8c-.4 0-.7.3-.7.7 0 .4.3.7.7.7.4 0 .7-.3.7-.7 0-.3-.3-.7-.7-.7z"></path></svg>
+      </a>
+      <div class="logo-title">
+          dotscience <span>model deploy demo</span>
+      </div>
+    
+      <ul class="right hide-on-med-and-down">
+        <li><a href="https://dotscience.com/">dotscience.com</a></li>
+      </ul>
+
+      <ul id="nav-mobile" class="sidenav">
+          <li><a href="https://dotscience.com/">dotscience.com</a></li>
+      </ul>
+      <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <h1 class="center">MNIST Predictor</h1>
+      <div class="row center">
+        Enter your model serving host and path then click on an image below for the deployed model to predict what it is...
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="width:60%;">
+    <div class="row">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <input placeholder="https://mymodel.app.dotscience.com" id="model_host" type="text">
+            <label for="first_name">Model Host</label>
+          </div>
+          <div class="input-field col s6">
+            <input placeholder="/v1/models/model:predict" id="model_path" type="text">
+            <label for="last_name">Model Path</label>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+
+
+  <div id="resultsmodel" class="modal">
+    <div class="modal-header">
+      <a href="#!" class="modal-close">
+      <svg width="25" height="25" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          viewBox="0 0 455.992 455.992" style="enable-background:new 0 0 455.992 455.992;" xml:space="preserve">
+       <g>
+         <g>
+           <g>
+             <g>
+               <path style="fill:#010002;" d="M227.996,0C102.081,0,0,102.081,0,227.996c0,125.945,102.081,227.996,227.996,227.996
+                 c125.945,0,227.996-102.051,227.996-227.996C455.992,102.081,353.941,0,227.996,0z M227.996,425.593
+                 c-108.952,0-197.597-88.645-197.597-197.597S119.044,30.399,227.996,30.399s197.597,88.645,197.597,197.597
+                 S336.948,425.593,227.996,425.593z"/>
+               <path style="fill:#010002;" d="M312.142,122.358l-83.538,83.568l-74.965-83.568c-5.928-5.928-15.565-5.928-21.492,0
+                 c-5.928,5.928-5.928,15.565,0,21.492l74.965,83.568l-84.723,84.723c-5.928,5.928-5.928,15.595,0,21.492
+                 c5.928,5.928,15.565,5.928,21.492,0l83.568-83.538l74.965,83.538c5.897,5.928,15.565,5.928,21.462,0
+                 c5.928-5.898,5.928-15.565,0-21.492l-74.995-83.538l84.723-84.754c5.928-5.928,5.928-15.565,0-21.492
+                 C327.676,116.43,318.07,116.43,312.142,122.358z"/>
+             </g>
+           </g>
+         </g>        
+       </g>
+      </svg>
+      </a>
+    </div>
+    <div class="modal-content">
+      <h4><span id="results-label">Prediction Results</span></h4>
+      <div id="results-loading">
+          <p>Loading...</p>
+      </div>
+      <div id="results-error">
+          Error
+      </div>
+      <div id="results-data">
+        <div id="results-chart"></div>
+
+        <h5>Tensorflow Serving top 5</h5>
+        <pre><code id="results-json"></code></pre>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="section">
+
+      <!--   Icon Section   -->
+      <div id="image-cards">
+        
+      </div>
+
+    </div>
+  </div>
+
+
+  
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/apexcharts.js"></script>
+  <script src="js/init.js?2019032001"></script>
+
+  </body>
+</html>

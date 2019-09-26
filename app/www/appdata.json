@@ -1,0 +1,26 @@
+{
+    "image_filenames": [
+        "./new_test_images/0.jpg",
+        "./new_test_images/1.jpg",
+        "./new_test_images/2.jpg",
+        "./new_test_images/3.jpg",
+        "./new_test_images/4.jpg",
+        "./new_test_images/5.jpg",
+        "./new_test_images/6.jpg",
+        "./new_test_images/7.jpg",
+        "./new_test_images/8.jpg",
+        "./new_test_images/9.jpg"
+    ],
+    "image_labels": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+    ]
+}

@@ -1,0 +1,14 @@
+kind: pipeline
+name: default
+
+steps:
+- name: publish-image  
+  image: plugins/docker
+  settings:
+    registry: quay.io
+    repo: quay.io/dotmesh/dotscience-deploy-demo
+    auto_tag: true
+    username:
+      from_secret: quay_username
+    password:
+      from_secret: quay_password
