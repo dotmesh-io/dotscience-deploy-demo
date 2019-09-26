@@ -1,4 +1,4 @@
-## Dotscience deploy demo
+## dotscience deploy demo
 
 A web application that posts MNIST image data to a user defined endpoint and displays the prediction results.
 
