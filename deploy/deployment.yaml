@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    keel.sh/policy: force
+  labels:
+    app: mnist-app
+  name: mnist-app
+  namespace: dotscience-deploy-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mnist-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mnist-app
+    spec:
+      containers:
+      - env:
+        image: quay.io/dotmesh/dotscience-deploy-demo:latest
+        imagePullPolicy: Always
+        name: mnist-app-container
+        ports:
+        - containerPort: 80
+          protocol: TCP
