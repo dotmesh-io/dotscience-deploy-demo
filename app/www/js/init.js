@@ -6,10 +6,6 @@
   var chart = null
   var chartId = 'results-chart-1'
 
-  function getEndpoint() {
-
-  }
-
   function showError(errorMessage, data) {
     $('#results-error').text(errorMessage)
     $('#results-loading').hide()
@@ -20,50 +16,46 @@
     }
   }
 
-  function loadResult(label, b64EncodedData) {
+  function loadResult(label, imageRows) {
     
     $('#results-label').text(label)
     $('#results-data').hide()
     $('#results-error').hide()
     $('#results-loading').show()
 
-    var model_host = $('#model_host').val()
-    var model_path = $('#model_path').val()
+    var model_url = $('#model_url').val()
 
-    if(!model_host) {
-      showError('Please enter a Model Host')
+    if(!model_url) {
+      showError('Please enter a Model URL')
       return
     }
 
-    if(!model_path) {
-      showError('Please enter a Model Path')
-      return
+    var request_body = {
+      inputs: {
+        conv2d_input: [imageRows]
+      }
     }
 
-    var TENSORFLOW_URL = model_host + model_path
- 
     var requestPayload = {
-      instances: [
-        {
-          input_image_bytes: [b64EncodedData] 
-        }        
-      ]        
+      model_url: model_url,
+      request_body: request_body,
     }   
 
     $.ajax({
       method: 'POST',
-      url: TENSORFLOW_URL,
+      url: '/model',
       data: JSON.stringify(requestPayload),
       dataType: 'json',
       contentType: "application/json; charset=utf-8",
-      success: function(response) {   
+      success: function(response) {
+        
         $('#results-loading').hide()
         
         var transformed = []
-        response.predictions[0].map(function(output, i) {         
+        response.outputs[0].map(function(output, i) {         
           transformed.push({          
             'probability': output,
-            'class': classes[i],            
+            'class': classes[i],       
           })
         })
 
@@ -173,7 +165,6 @@
         $('#results-json').text(dataString)       
       },
       error: function(response) {
-        var errorMessage = response.status + ' ' + response.statusText
         showError(response.status + ' ' + response.statusText, response.responseText)
       }
     })
@@ -211,32 +202,55 @@
     })
   }
 
+  function getColorIndicesForCoord(x, y, width) {
+    var red = y * (width * 4) + x * 4;
+    return [red, red + 1, red + 2, red + 3];
+  }
+
   function toDataURL(src, callback, outputFormat) {
     var img = new Image();
     img.crossOrigin = 'Anonymous';
     img.onload = function() {
       var canvas = document.createElement('CANVAS');
       var ctx = canvas.getContext('2d');
-      var dataURL;
-      canvas.height = this.naturalHeight;
-      canvas.width = this.naturalWidth;
-      ctx.drawImage(this, 0, 0);
-      dataURL = canvas.toDataURL(outputFormat);
-      let encodedBase64 = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
 
-      // well, we need to do some replacements: https://www.tensorflow.org/api_docs/python/tf/io/decode_base64
-      let encodedURLSafeb64 = encodedBase64.replace(/\+/g, '-') // Convert '+' to '-'
-        .replace(/\//g, '_') // Convert '/' to '_'
-        .replace(/=+$/, ''); // Remove ending '='
+      var imageWidth = this.naturalWidth
+      var imageHeight = this.naturalHeight
+      
+      canvas.width = imageHeight
+      canvas.height = imageWidth
+      
+      ctx.drawImage(this, 0, 0)
 
-      callback(encodedURLSafeb64);
+      // convert the image into greyscale tensor format
+      var imageData = ctx.getImageData(0, 0, imageWidth, imageHeight)
+      var imageRows = []
+      for(var row=0; row<imageHeight; row++) {
+        var imageRow = []
+        for(var col=0; col<imageWidth; col++) {
+          var indexes = {
+            red: getColorIndicesForCoord(row, col, imageWidth)[0],
+            green: getColorIndicesForCoord(row, col, imageWidth)[1],
+            blue: getColorIndicesForCoord(row, col, imageWidth)[2],
+          }
+          var colors = {
+            red: imageData.data[indexes.red],
+            green: imageData.data[indexes.green],
+            blue: imageData.data[indexes.blue],
+          }
+          var grey = colors.red * 0.2126 + colors.green * 0.7152 + colors.blue * 0.0722
+          imageRow.push([grey/255])     
+        }
+        imageRows.push(imageRow)
+      }
+      callback(imageRows);
     };
     img.src = src;
-      if (img.complete || img.complete === undefined) {
-        img.src = "data:image/jpg;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-        img.src = src;
-      }
+    if (img.complete || img.complete === undefined) {
+      img.src = "data:image/jpg;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+      img.src = src;
     }
+  }
     
 
   function loadAppData() {

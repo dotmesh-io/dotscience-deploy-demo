@@ -1,32 +1,37 @@
 'use strict'
 
 const express = require('express')
+const bodyParser = require('body-parser')
 const ecstatic = require('ecstatic')
-const httpProxy = require('http-proxy')
-
-var tf = process.env.TENSORFLOW_HOST
-var mpx = process.env.MODEL_PROXY_HOST
+const request = require('request')
 
 const App = () => {
-
-  const proxy = httpProxy.createProxyServer({
-    
-  })
-
-  proxy.on('error', (err, req, res) => {
-    console.log('Proxy server error: \n', err);
-    res.status(500).end(err.message)
-  })
-
-  // the HTTP server
+  
   const app = express()
+  app.use(bodyParser.json())
 
-  app.use('/api', (req, res, next) => {
-    proxy.web(req, res, { target: `${mpx}/api` })
-  })
-
-  app.use('/v1', (req, res, next) => {
-    proxy.web(req, res, { target: `${tf}/v1` })
+  app.post('/model', (req, res, next) => {
+    const {
+      model_url,
+      request_body,
+    } = req.body
+    request({
+      method: 'POST',
+      url: model_url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request_body),
+    }, (err, response, body) => {
+      if(err) {
+        res.status(500)
+        res.end(err.toString())
+        return
+      }
+      res.status(response.statusCode)
+      res.setHeader('Content-Type', response.headers['content-type'])
+      res.end(body)
+    })
   })
 
   app.use(ecstatic({
