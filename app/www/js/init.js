@@ -16,7 +16,7 @@
     }
   }
 
-  function loadResult(label, imageRows) {
+  function loadResult(label, numberTitle) {
     
     $('#results-label').text(label)
     $('#results-data').hide()
@@ -30,15 +30,9 @@
       return
     }
 
-    var request_body = {
-      inputs: {
-        conv2d_input: [imageRows]
-      }
-    }
-
     var requestPayload = {
       model_url: model_url,
-      request_body: request_body,
+      numberTitle: numberTitle,
     }   
 
     $.ajax({
@@ -52,7 +46,7 @@
         $('#results-loading').hide()
         
         var transformed = []
-        response.outputs[0].map(function(output, i) {         
+        response.predictions[0].map(function(output, i) {         
           transformed.push({          
             'probability': output,
             'class': classes[i],       
@@ -187,71 +181,12 @@
         if (chart) {
           chart.destroy()
         }
-        toDataURL(
-          // 'https://www.gravatar.com/avatar/d50c83cc0c6523b4d3f6085295c953e0',
-          filename,
-          function(dataUrl) {
-            // console.log('RESULT:', dataUrl)
-            loadResult(label, dataUrl)
-          }
-        )
-        // loadResult(label, imageData, filename)
+        loadResult(label, i)
       })
 
       $('#image-cards').append(elem)
     })
   }
-
-  function getColorIndicesForCoord(x, y, width) {
-    var red = y * (width * 4) + x * 4;
-    return [red, red + 1, red + 2, red + 3];
-  }
-
-  function toDataURL(src, callback, outputFormat) {
-    var img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = function() {
-      var canvas = document.createElement('CANVAS');
-      var ctx = canvas.getContext('2d');
-
-      var imageWidth = this.naturalWidth
-      var imageHeight = this.naturalHeight
-      
-      canvas.width = imageHeight
-      canvas.height = imageWidth
-      
-      ctx.drawImage(this, 0, 0)
-
-      // convert the image into greyscale tensor format
-      var imageData = ctx.getImageData(0, 0, imageWidth, imageHeight)
-      var imageRows = []
-      for(var row=0; row<imageHeight; row++) {
-        var imageRow = []
-        for(var col=0; col<imageWidth; col++) {
-          var indexes = {
-            red: getColorIndicesForCoord(row, col, imageWidth)[0],
-            green: getColorIndicesForCoord(row, col, imageWidth)[1],
-            blue: getColorIndicesForCoord(row, col, imageWidth)[2],
-          }
-          var colors = {
-            red: imageData.data[indexes.red],
-            green: imageData.data[indexes.green],
-            blue: imageData.data[indexes.blue],
-          }
-          var grey = colors.red * 0.2126 + colors.green * 0.7152 + colors.blue * 0.0722
-          imageRow.push([grey/255])     
-        }
-        imageRows.push(imageRow)
-      }
-      callback(imageRows);
-    };
-    img.src = src;
-    if (img.complete || img.complete === undefined) {
-      img.src = "data:image/jpg;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-      img.src = src;
-    }
-  }
-    
 
   function loadAppData() {
     $.getJSON('/appdata.json', function(data) {

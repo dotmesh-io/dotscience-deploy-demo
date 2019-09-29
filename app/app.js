@@ -5,6 +5,12 @@ const bodyParser = require('body-parser')
 const ecstatic = require('ecstatic')
 const request = require('request')
 
+const requests = {}
+
+for(let i=0; i<10; i++){
+  requests[i] = require(`./images/req${i}.json`)
+}
+
 const App = () => {
   
   const app = express()
@@ -13,15 +19,16 @@ const App = () => {
   app.post('/model', (req, res, next) => {
     const {
       model_url,
-      request_body,
+      numberTitle,
     } = req.body
+    const requestBody = requests[numberTitle]
     request({
       method: 'POST',
       url: model_url,
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(request_body),
+      body: JSON.stringify(requestBody),
     }, (err, response, body) => {
       if(err) {
         res.status(500)
