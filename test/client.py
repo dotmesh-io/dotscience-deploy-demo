@@ -5,7 +5,7 @@ from PIL import Image
 import requests
     
 def main():
-  image_file = '../app/www/new_test_images/9.jpg'
+  image_file = '../app/www/mnist_images/9.jpg'
   # Convert arbitrary sized jpeg image to 28x28 b/w image.
   data = np.array(Image.open(image_file).convert('L').resize((28, 28))).astype(np.float).reshape(-1, 28, 28, 1)
   # Dump jpeg image bytes as 28x28x1 tensor
