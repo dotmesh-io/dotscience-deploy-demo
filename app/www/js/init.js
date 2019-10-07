@@ -26,7 +26,7 @@
     var model_url = $('#model_url').val()
 
     if(!model_url) {
-      showError('Please enter a Model URL')
+      showError('Please enter a Model Endpoint')
       return
     }
 
