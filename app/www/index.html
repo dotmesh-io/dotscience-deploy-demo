@@ -58,7 +58,7 @@
         <div class="col s12">
           <div class="row">
             <div class="input-field col s12">
-              <input placeholder="https://mnist-demo.dotscience.com/v1/models/mnist:predict" id="mnist_model_url" type="text" value="https://13e22ee2.app.cloud.dotscience.net/v1/models/model:predict">
+              <input placeholder="https://mnist-demo.dotscience.com/v1/models/mnist:predict" id="mnist_model_url" type="text">
               <label for="mnist_model_url">Model Endpoint</label>
             </div>
           </div>
@@ -96,7 +96,7 @@
           <div class="col s12">
             <div class="row">
               <div class="input-field col s12">
-                <input placeholder="https://ds-model.dotscience.net/v1/models/model:predict" id="roadsigns_model_url" type="text" value="https://ds-model.dotscience.net/v1/models/model:predict">
+                <input placeholder="https://7b1afe9c.app.cloud.dotscience.net/v1/models/model:predict" id="roadsigns_model_url" type="text">
                 <label for="roadsigns_model_url">Model Endpoint</label>
               </div>
             </div>
@@ -118,49 +118,6 @@
   
     </div>
     
-  </div>
-
-
-  <div id="resultsmodel" class="modal">
-    <div class="modal-header">
-      <a href="#!" class="modal-close">
-      <svg width="25" height="25" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-          viewBox="0 0 455.992 455.992" style="enable-background:new 0 0 455.992 455.992;" xml:space="preserve">
-        <g>
-          <g>
-            <g>
-              <g>
-                <path style="fill:#010002;" d="M227.996,0C102.081,0,0,102.081,0,227.996c0,125.945,102.081,227.996,227.996,227.996
-                  c125.945,0,227.996-102.051,227.996-227.996C455.992,102.081,353.941,0,227.996,0z M227.996,425.593
-                  c-108.952,0-197.597-88.645-197.597-197.597S119.044,30.399,227.996,30.399s197.597,88.645,197.597,197.597
-                  S336.948,425.593,227.996,425.593z"/>
-                <path style="fill:#010002;" d="M312.142,122.358l-83.538,83.568l-74.965-83.568c-5.928-5.928-15.565-5.928-21.492,0
-                  c-5.928,5.928-5.928,15.565,0,21.492l74.965,83.568l-84.723,84.723c-5.928,5.928-5.928,15.595,0,21.492
-                  c5.928,5.928,15.565,5.928,21.492,0l83.568-83.538l74.965,83.538c5.897,5.928,15.565,5.928,21.462,0
-                  c5.928-5.898,5.928-15.565,0-21.492l-74.995-83.538l84.723-84.754c5.928-5.928,5.928-15.565,0-21.492
-                  C327.676,116.43,318.07,116.43,312.142,122.358z"/>
-              </g>
-            </g>
-          </g>        
-        </g>
-      </svg>
-      </a>
-    </div>
-    <div class="modal-content">
-      <h4><span id="results-label">Prediction Results</span></h4>
-      <div id="results-loading">
-          <p>Loading...</p>
-      </div>
-      <div id="results-error">
-          Error
-      </div>
-      <div id="results-data">
-        <div id="results-chart"></div>
-
-        <h5>Tensorflow Serving top 5</h5>
-        <pre><code id="results-json"></code></pre>
-      </div>
-    </div>
   </div>
 
   <div id="mnist-resultsmodel" class="modal">
@@ -251,7 +208,7 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/apexcharts.js"></script>
-  <script src="js/init.js?2019100707"></script>
+  <script src="js/init.js?2019100709"></script>
 
   </body>
 </html>

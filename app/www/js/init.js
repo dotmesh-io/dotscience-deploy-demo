@@ -50,28 +50,27 @@
       return
     }
 
-    var requestPayload = {
+    var mnistRequestPayload = {
       model_url: mnist_model_url,
       numberTitle: numberTitle,
     }   
 
-    console.log('here')
-    
+
     $.ajax({
       method: 'POST',
-      url: '/model',
-      data: JSON.stringify(requestPayload),
+      url: '/mnist',
+      data: JSON.stringify(mnistRequestPayload),
       dataType: 'json',
       contentType: "application/json; charset=utf-8",
       success: function(response) {
         
         $('#mnist-results-loading').hide()
-        
+
         var transformed = []
         response.predictions[0].map(function(output, i) {         
           transformed.push({          
             'probability': output,
-            'class': classes[i],       
+            'class': mnistClasses[i],       
           })
         })
 
@@ -187,23 +186,36 @@
   }
 
   function loadRoadsignsResult(label, b64EncodedData) {
+
     $('#roadsigns-results-label').text(label)
     $('#roadsigns-results-data').hide()
     $('#roadsigns-results-error').hide()
     $('#roadsigns-results-loading').show()
+
+    var roadsigns_model_url = $('#roadsigns_model_url').val()
+
+    console.log(roadsigns_model_url)
+
+    if(!roadsigns_model_url) {
+      showRoadsignsError('Please enter a Model Endpoint')
+      return
+    }
  
-    var requestPayload = {
-      instances: [
-        {
-          input_image_bytes: [b64EncodedData] 
-        }        
-      ]        
+    var roadsignsRequestPayload = {
+      model_url: roadsigns_model_url,
+      model_request: {
+        instances: [
+          {
+            input_image_bytes: [b64EncodedData] 
+          }        
+        ]
+      }
     }   
 
     $.ajax({
       method: 'POST',
-      url: TENSORFLOW_URL,
-      data: JSON.stringify(requestPayload),
+      url: '/roadsigns',
+      data: JSON.stringify(roadsignsRequestPayload),
       dataType: 'json',
       contentType: "application/json; charset=utf-8",
       success: function(response) {   
@@ -213,7 +225,7 @@
         response.predictions[0].map(function(output, i) {         
           transformed.push({          
             'probability': output,
-            'class': classes[i],            
+            'class': roadsignsClasses[i],            
           })
         })
 
@@ -339,10 +351,10 @@
       var elem = $([
         '<div class="card">',
           '<div class="card-image">',
-            '<a class="modal-trigger" href="#resultsmodel"><img src="' + filename + '"></a>',
+            '<a class="modal-trigger" href="#mnist-resultsmodel"><img src="' + filename + '"></a>',
           '</div>',
-          '<div class="card-content"><a class="modal-trigger" href="#resultsmodel"><p>' + label + '</p></a></div>',
-          '<div class="card-action"><a class="modal-trigger button buttonSecondary waves-effect" href="#resultsmodel">Predict</a></div>',
+          '<div class="card-content"><a class="modal-trigger" href="#mnist-resultsmodel"><p>' + label + '</p></a></div>',
+          '<div class="card-action"><a class="modal-trigger button buttonSecondary waves-effect" href="#mnist-resultsmodel">Predict</a></div>',
         '</div>',
       ].join("\n"))
 
@@ -363,10 +375,10 @@
       var elem = $([
         '<div class="card">',
           '<div class="card-image">',
-            '<a class="modal-trigger" href="#resultsmodel"><img src="' + filename + '"></a>',
+            '<a class="modal-trigger" href="#roadsigns-resultsmodel"><img src="' + filename + '"></a>',
           '</div>',
-          '<div class="card-content"><a class="modal-trigger" href="#resultsmodel"><p>' + label + '</p></a></div>',
-          '<div class="card-action"><a class="modal-trigger button buttonSecondary waves-effect" href="#resultsmodel">Predict</a></div>',
+          '<div class="card-content"><a class="modal-trigger" href="#roadsigns-resultsmodel"><p>' + label + '</p></a></div>',
+          '<div class="card-action"><a class="modal-trigger button buttonSecondary waves-effect" href="#roadsigns-resultsmodel">Predict</a></div>',
         '</div>',
       ].join("\n"))
 
