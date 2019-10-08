@@ -1,0 +1,26 @@
+{
+    "image_filenames": [
+        "./mnist_images/0.jpg",
+        "./mnist_images/1.jpg",
+        "./mnist_images/2.jpg",
+        "./mnist_images/3.jpg",
+        "./mnist_images/4.jpg",
+        "./mnist_images/5.jpg",
+        "./mnist_images/6.jpg",
+        "./mnist_images/7.jpg",
+        "./mnist_images/8.jpg",
+        "./mnist_images/9.jpg"
+    ],
+    "image_labels": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+    ]
+}

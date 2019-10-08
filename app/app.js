@@ -14,9 +14,11 @@ for(let i=0; i<10; i++){
 const App = () => {
   
   const app = express()
-  app.use(bodyParser.json())
+  app.use(bodyParser.json({
+    limit: '10mb'
+  }))
 
-  app.post('/model', (req, res, next) => {
+  app.post('/mnist', (req, res, next) => {
     const {
       model_url,
       numberTitle,
@@ -29,6 +31,30 @@ const App = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(requestBody),
+    }, (err, response, body) => {
+      if(err) {
+        res.status(500)
+        res.end(err.toString())
+        return
+      }
+      res.status(response.statusCode)
+      res.setHeader('Content-Type', response.headers['content-type'])
+      res.end(body)
+    })
+  })
+
+  app.post('/roadsigns', (req, res, next) => {
+    const {
+      model_url,
+      model_request,
+    } = req.body
+    request({
+      method: 'POST',
+      url: model_url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(model_request),
     }, (err, response, body) => {
       if(err) {
         res.status(500)

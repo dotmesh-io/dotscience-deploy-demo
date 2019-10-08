@@ -1,0 +1,16 @@
+{
+    "image_filenames": [
+        "./roadsigns_images/002.jpg",
+        "./roadsigns_images/005.jpg",
+        "./roadsigns_images/004.jpg",
+        "./roadsigns_images/003.jpg",
+        "./roadsigns_images/001.jpg"
+    ],
+    "image_labels": [
+        "Speed limit (60km/h)",
+        "No entry",
+        "Pedestrians",
+        "Stop",
+        "Yield"
+    ]
+}

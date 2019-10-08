@@ -1,55 +1,76 @@
 (function($){
 
-  var appData = null
-  var classes = null
+  var mnistAppData = null
+  var mnistClasses = null
+  var roadsignsAppData = null
+  var roadsignsClasses = null
 
-  var chart = null
-  var chartId = 'results-chart-1'
+  var chart1 = null
+  var chart2 = null
+  var chartId1 = 'results-chart-1'
+  var chartId2 = 'results-chart-2'
 
-  function showError(errorMessage, data) {
-    $('#results-error').text(errorMessage)
-    $('#results-loading').hide()
-    $('#results-error').show()
+  $('input[type="checkbox"]').click(function() {
+    $('#mnist, #roadsigns').toggle()
+  });
+
+  $('#roadsigns').hide();
+
+  function showMnistError(errorMessage, data) {
+    $('#mnist-results-error').text(errorMessage)
+    $('#mnist-results-loading').hide()
+    $('#mnist-results-error').show()
     if(data) {
-      $('#results-data').show()
-      $('#results-json').text(data)
+      $('#mnist-results-data').show()
+      $('#mnist-results-json').text(data)
     }
   }
 
-  function loadResult(label, numberTitle) {
+  function showRoadsignsError(errorMessage, data) {
+    $('#roadsigns-results-error').text(errorMessage)
+    $('#roadsigns-results-loading').hide()
+    $('#roadsigns-results-error').show()
+    if(data) {
+      $('#roadsigns-results-data').show()
+      $('#rroadsigns-esults-json').text(data)
+    }
+  }
+
+  function loadMnistResult(label, numberTitle) {
     
-    $('#results-label').text(label)
-    $('#results-data').hide()
-    $('#results-error').hide()
-    $('#results-loading').show()
+    $('#mnist-results-label').text(label)
+    $('#mnist-results-data').hide()
+    $('#mnist-results-error').hide()
+    $('#mnist-results-loading').show()
 
-    var model_url = $('#model_url').val()
+    var mnist_model_url = $('#mnist_model_url').val()
 
-    if(!model_url) {
-      showError('Please enter a Model URL')
+    if(!mnist_model_url) {
+      showMnistError('Please enter a Model Endpoint')
       return
     }
 
-    var requestPayload = {
-      model_url: model_url,
+    var mnistRequestPayload = {
+      model_url: mnist_model_url,
       numberTitle: numberTitle,
     }   
 
+
     $.ajax({
       method: 'POST',
-      url: '/model',
-      data: JSON.stringify(requestPayload),
+      url: '/mnist',
+      data: JSON.stringify(mnistRequestPayload),
       dataType: 'json',
       contentType: "application/json; charset=utf-8",
       success: function(response) {
         
-        $('#results-loading').hide()
-        
+        $('#mnist-results-loading').hide()
+
         var transformed = []
         response.predictions[0].map(function(output, i) {         
           transformed.push({          
             'probability': output,
-            'class': classes[i],       
+            'class': mnistClasses[i],       
           })
         })
 
@@ -67,7 +88,7 @@
 
         var options = {
           chart: {
-            id: chartId,
+            id: chartId1,
             height: 350,
             type: 'bar'
           },
@@ -151,53 +172,279 @@
           }
         }
                
-        chart = new ApexCharts(document.querySelector("#results-chart"), options)        
-        chart.render()
+        chart1 = new ApexCharts(document.querySelector("#mnist-results-chart"), options)        
+        chart1.render()
 
         var dataString = JSON.stringify(transformed, null, 4)
-        $('#results-data').show()
-        $('#results-json').text(dataString)       
+        $('#mnist-results-data').show()
+        $('#mnist-results-json').text(dataString)       
       },
       error: function(response) {
-        showError(response.status + ' ' + response.statusText, response.responseText)
+        showMnistError(response.status + ' ' + response.statusText, response.responseText)
       }
     })
   }
 
-  function renderImages() {
-    appData.image_filenames.map(function(filename, i) {
-      var label = appData.image_labels[i]      
+  function loadRoadsignsResult(label, b64EncodedData) {
+
+    $('#roadsigns-results-label').text(label)
+    $('#roadsigns-results-data').hide()
+    $('#roadsigns-results-error').hide()
+    $('#roadsigns-results-loading').show()
+
+    var roadsigns_model_url = $('#roadsigns_model_url').val()
+
+    console.log(roadsigns_model_url)
+
+    if(!roadsigns_model_url) {
+      showRoadsignsError('Please enter a Model Endpoint')
+      return
+    }
+ 
+    var roadsignsRequestPayload = {
+      model_url: roadsigns_model_url,
+      model_request: {
+        instances: [
+          {
+            input_image_bytes: [b64EncodedData] 
+          }        
+        ]
+      }
+    }   
+
+    $.ajax({
+      method: 'POST',
+      url: '/roadsigns',
+      data: JSON.stringify(roadsignsRequestPayload),
+      dataType: 'json',
+      contentType: "application/json; charset=utf-8",
+      success: function(response) {   
+        $('#roadsigns-results-loading').hide()
+        
+        var transformed = []
+        response.predictions[0].map(function(output, i) {         
+          transformed.push({          
+            'probability': output,
+            'class': roadsignsClasses[i],            
+          })
+        })
+
+        transformed.sort((a, b) => (a.probability < b.probability) ? 1 : -1)
+
+        transformed = transformed.slice(0, 5)
+
+        var yAxis = []
+        var xAxis = []
+
+        transformed.map(function(entry, i) {
+          xAxis.push(entry.probability)
+          yAxis.push(entry.class)
+        })
+
+        var options = {
+          chart: {
+            id: chartId2,
+            height: 350,
+            type: 'bar'
+          },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+              dataLabels: {
+                position: 'top'
+              }              
+            }            
+          },
+          legend: {
+            show: true,
+            showForSingleSeries: false,
+            showForNullSeries: true,
+            showForZeroSeries: true,
+            position: 'bottom',
+            horizontalAlign: 'center', 
+            floating: false,
+            fontSize: '17px',
+          },
+          dataLabels: {
+            enabled: true,
+          },
+          series: [{
+            name: 'Probability',
+            data: xAxis, 
+            title: {
+              text: 'Class'
+            },        
+          }],
+          xaxis: {
+            categories: yAxis, // xaxis gets yAxis because we have a horizontal chart
+            title: {
+              text: 'Probability'
+            },
+            labels: {
+              show: true,
+              rotate: -45,
+              rotateAlways: false,
+              hideOverlappingLabels: true,
+              showDuplicates: false,
+              trim: true,
+              minHeight: undefined,
+              maxHeight: 120,
+              style: {
+                  colors: [],
+                  fontSize: '15px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  cssClass: 'apexcharts-xaxis-label',
+              },
+              offsetX: 0,
+              offsetY: 0,
+              format: undefined,
+              formatter: undefined
+             },
+          },
+          yaxis: {         
+            labels: {
+              minWidth: 0,
+              maxWidth: 300,
+              style: {               
+                  fontSize: '16px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  cssClass: 'apexcharts-yaxis-label',
+              }                      
+            },
+          },
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 300,
+            animateGradually: {
+                enabled: true,
+                delay: 150
+            },
+            dynamicAnimation: {
+                enabled: true,
+                speed: 350
+            }
+          }
+        }
+               
+        chart2 = new ApexCharts(document.querySelector("#roadsigns-results-chart"), options)        
+        chart2.render()
+
+        var dataString = JSON.stringify(transformed, null, 4)
+        $('#roadsigns-results-data').show()
+        $('#roadsigns-results-json').text(dataString)       
+      },
+      error: function(response) {
+        var errorMessage = response.status + ' ' + response.statusText
+        $('#roadsigns-results-error').text(errorMessage)
+        $('#roadsigns-results-loading').hide()
+        $('#roadsigns-results-error').show()
+        $('#roadsigns-results-data').show()
+        $('#roadsigns-results-json').text(response.responseText)
+      }
+    })
+  }
+
+  function renderMnistImages() {
+    mnistAppData.image_filenames.map(function(filename, i) {
+      var label = mnistAppData.image_labels[i]      
       var elem = $([
         '<div class="card">',
           '<div class="card-image">',
-            '<a class="modal-trigger" href="#resultsmodel"><img src="' + filename + '"></a>',
+            '<a class="modal-trigger" href="#mnist-resultsmodel"><img src="' + filename + '"></a>',
           '</div>',
-          '<div class="card-content"><a class="modal-trigger" href="#resultsmodel"><p>' + label + '</p></a></div>',
-          '<div class="card-action"><a class="modal-trigger button buttonSecondary waves-effect" href="#resultsmodel">Predict</a></div>',
+          '<div class="card-content"><a class="modal-trigger" href="#mnist-resultsmodel"><p>' + label + '</p></a></div>',
+          '<div class="card-action"><a class="modal-trigger button buttonSecondary waves-effect" href="#mnist-resultsmodel">Predict</a></div>',
         '</div>',
       ].join("\n"))
 
       elem.click(function() {
-        if (chart) {
-          chart.destroy()
+        if (chart1) {
+          chart1.destroy()
         }
-        loadResult(label, i)
+        loadMnistResult(label, i)
       })
 
-      $('#image-cards').append(elem)
+      $('#mnist #image-cards').append(elem)
     })
   }
 
+  function renderRoadsignsImages() {
+    roadsignsAppData.image_filenames.map(function(filename, i) {
+      var label = roadsignsAppData.image_labels[i]      
+      var elem = $([
+        '<div class="card">',
+          '<div class="card-image">',
+            '<a class="modal-trigger" href="#roadsigns-resultsmodel"><img src="' + filename + '"></a>',
+          '</div>',
+          '<div class="card-content"><a class="modal-trigger" href="#roadsigns-resultsmodel"><p>' + label + '</p></a></div>',
+          '<div class="card-action"><a class="modal-trigger button buttonSecondary waves-effect" href="#roadsigns-resultsmodel">Predict</a></div>',
+        '</div>',
+      ].join("\n"))
+
+      elem.click(function() {
+        if (chart2) {
+          chart2.destroy()
+        }
+        toDataURL(
+          // 'https://www.gravatar.com/avatar/d50c83cc0c6523b4d3f6085295c953e0',
+          filename,
+          function(dataUrl) {
+            // console.log('RESULT:', dataUrl)
+            loadRoadsignsResult(label, dataUrl)
+          }
+        )
+        // loadResult(label, imageData, filename)
+      })
+
+      $('#roadsigns #image-cards').append(elem)
+    })
+  }
+
+  function toDataURL(src, callback, outputFormat) {
+    var img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function() {
+      var canvas = document.createElement('CANVAS');
+      var ctx = canvas.getContext('2d');
+      var dataURL;
+      canvas.height = this.naturalHeight;
+      canvas.width = this.naturalWidth;
+      ctx.drawImage(this, 0, 0);
+      dataURL = canvas.toDataURL(outputFormat);
+      let encodedBase64 = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+
+      // well, we need to do some replacements: https://www.tensorflow.org/api_docs/python/tf/io/decode_base64
+      let encodedURLSafeb64 = encodedBase64.replace(/\+/g, '-') // Convert '+' to '-'
+        .replace(/\//g, '_') // Convert '/' to '_'
+        .replace(/=+$/, ''); // Remove ending '='
+
+      callback(encodedURLSafeb64);
+    };
+    img.src = src;
+    if (img.complete || img.complete === undefined) {
+      img.src = "data:image/jpg;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+      img.src = src;
+    }
+  }
+
   function loadAppData() {
-    $.getJSON('/appdata.json', function(data) {
-      appData = data
-      renderImages()
+    $.getJSON('/mnist_appdata.json', function(data) {
+      mnistAppData = data
+      renderMnistImages()
+    })
+    $.getJSON('/roadsigns_appdata.json', function(data) {
+      roadsignsAppData = data
+      renderRoadsignsImages()
     })
   }
 
   function loadClasses() {
-    $.getJSON('/classes.json', function(data) {
-      classes = data      
+    $.getJSON('/mnist_classes.json', function(data) {
+      mnistClasses = data      
+    })
+    $.getJSON('/roadsigns_classes.json', function(data) {
+      roadsignsClasses = data      
     })
   }
 
@@ -210,6 +457,5 @@
     
     loadAppData()
     loadClasses()
-
   })
 })(jQuery)
