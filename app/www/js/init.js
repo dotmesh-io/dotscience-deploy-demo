@@ -361,6 +361,7 @@
       elem.click(function() {
         if (chart1) {
           chart1.destroy()
+          chart1 = null
         }
         loadMnistResult(label, i)
       })
@@ -385,6 +386,7 @@
       elem.click(function() {
         if (chart2) {
           chart2.destroy()
+          chart2 = null
         }
         toDataURL(
           // 'https://www.gravatar.com/avatar/d50c83cc0c6523b4d3f6085295c953e0',
