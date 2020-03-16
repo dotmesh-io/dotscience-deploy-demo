@@ -13,7 +13,7 @@ spec:
       - path: /
         backend:
           serviceName: mnist-app
-          servicePort: 80
+          servicePort: 8080
 
 --- 
 
@@ -28,9 +28,9 @@ spec:
   type: ClusterIP
   ports:
   - name: app
-    port: 80
+    port: 8080
     protocol: TCP
-    targetPort: 80
+    targetPort: 8080
   selector:
     app: mnist-app
   sessionAffinity: None
@@ -66,6 +66,10 @@ spec:
         image: quay.io/dotmesh/dotscience-deploy-demo:latest
         imagePullPolicy: Always
         name: mnist-app-container
+        env:
+        - name: PORT
+          value: '8080'
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           protocol: TCP
+        
